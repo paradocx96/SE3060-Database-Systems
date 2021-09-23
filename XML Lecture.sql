@@ -83,6 +83,8 @@ FROM AdminDocs
 SELECT id, xDoc.query('//child::product[attribute::dept="WMN"]')
 FROM AdminDocs
 
+SELECT id, xDoc.query('//parent::product[attribute::dept="WMN"]')
+FROM AdminDocs
 
 SELECT id, xDoc.query('//product[@dept="WMN"]')
 FROM AdminDocs
@@ -100,23 +102,47 @@ SELECT id, xDoc.query('//product/number[. gt 500]')
 FROM AdminDocs
 where id=1
 
+-- Print number less than 500 result sections with all details
+SELECT id, xDoc.query('//product[number < 500]')
+FROM AdminDocs
+where id=1
+
+-- Print number less than 500 result section's number lines (current node value < 500)
+SELECT id, xDoc.query('//product/number[. lt 500]')
+FROM AdminDocs
+where id=1
+
 -- Print 4th section
 SELECT id, xDoc.query('/catalog/product[4]')
 FROM AdminDocs
 where id=1
 
--- Multiple Conditions
+SELECT id, xDoc.query('/catalog/*[4]')
+FROM AdminDocs
+where id=1
+
+-- Multiple Conditions (Evaluate Left -> Right)
 SELECT id, xDoc.query('//product[number > 500][@dept="ACC"]')
 FROM AdminDocs
 where id=1
 
--- Print result 1st section
+-- Print 2nd ACC dept
+SELECT id, xDoc.query('//product[@dept="ACC"][2]')
+FROM AdminDocs
+where id=1
+
+-- Select 2nd product and print if it is dept=ACC
+SELECT id, xDoc.query('//product[2][@dept="ACC"]')
+FROM AdminDocs
+where id=1
+
+-- Print 1st product, result > 500
 SELECT id, xDoc.query('//product[number > 500][1]')
 FROM AdminDocs
 where id=1
 
 
--- FLWOR EXPRESSION 
+-- FLWOR EXPRESSION / XQuery
 -- FOR = getting values (Like FOR Loop)
 -- LET = declare variable
 -- WHERE = conditions
@@ -180,14 +206,25 @@ FROM AdminDocs
 where id=1
 
 
--- DML 
+-- DML
+-- Query()
+SELECT xDoc.query('/doc[@id = 123]//section')
+FROM AdminDocs
+
 -- Example: Using Exist() Method
 SELECT id
 FROM AdminDocs
 WHERE xDoc.exist('/doc[@id = 123]') = 1
 
+SELECT xDoc.query('/doc[@id = 123]//section')
+FROM AdminDocs
+WHERE xDoc.exist ('/doc[@id = 123]') = 1
+
 --Example: Using Value() Method
 SELECT xDoc.value('(/doc//section[@num = 3]/title)[1]', 'varchar(100)')
+FROM AdminDocs
+
+SELECT xDoc.value('data((/doc//section[@num = 3]/title)[1])', 'nvarchar(max)')
 FROM AdminDocs
 
 --Example: Insertion of Subtree into XML Instances
@@ -195,6 +232,7 @@ select *
 from AdminDocs 
 where id=2
 
+-- Modify()
 -- Adding XML part
 UPDATE AdminDocs SET xDoc.modify(
 'insert
