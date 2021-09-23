@@ -1,8 +1,7 @@
--- -- UNIVERSITY DATABASE
+-- UNIVERSITY DATABASE
 -- ===================
---
--- -- SCHEMA
--- ======
+-- SCHEMA
+-- ===================
 
 create type student_typ as object
 (
@@ -48,14 +47,10 @@ create table projects_tbl of project_typ
 
 -- LOADING DATA
 -- ============
-insert into students_tbl
-values ('DIT/M/0001', 'Sampath W.', 2.98, 1);
-insert into students_tbl
-values ('DIT/M/0002', 'Dulani F.', 3.22, 2);
-insert into students_tbl
-values ('DIT/M/0012', 'Sajith P.', 3.72, 1);
-insert into students_tbl
-values ('DIT/M/0023', 'Amali W.', 2.99, 2);
+insert into students_tbl values ('DIT/M/0001', 'Sampath W.', 2.98, 1);
+insert into students_tbl values ('DIT/M/0002', 'Dulani F.', 3.22, 2);
+insert into students_tbl values ('DIT/M/0012', 'Sajith P.', 3.72, 1);
+insert into students_tbl values ('DIT/M/0023', 'Amali W.', 2.99, 2);
 
 
 insert into projects_tbl
@@ -75,19 +70,16 @@ values ('M21',
         (select ref(s) from students_tbl s where regNo = 'DIT/M/0002'),
         member_t_ty());
 
-insert into table (select p.members from projects_tbl p where p.id = 'M21')
-values ((select ref(s) from students_tbl s where regNo = 'DIT/M/0002'), 'B');
+insert into table (select p.members from projects_tbl p where p.id = 'M21') values ((select ref(s) from students_tbl s where regNo = 'DIT/M/0002'), 'B');
+insert into table (select p.members from projects_tbl p where p.id = 'M21') values ((select ref(s) from students_tbl s where regNo = 'DIT/M/0023'), 'C');
 
-insert into table (select p.members from projects_tbl p where p.id = 'M21')
-values ((select ref(s) from students_tbl s where regNo = 'DIT/M/0023'), 'C');
-
-
+-- LAB EXAM --
+-- ======== --
 
 select p.ID, p.team_lead.NAME, m.grade
 from projects_tbl p,
      table ( p.MEMBERS ) m
 where p.TEAM_LEAD.GPA > 3.0
-
 
 alter type project_typ add member function maxGPA
     return float
@@ -104,7 +96,6 @@ create or replace type body project_typ as
     end;
 end;
 /
-
 
 select t.TITLE, t.maxGPA()
 from projects_tbl t
